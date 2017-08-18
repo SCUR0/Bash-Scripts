@@ -3,7 +3,8 @@
 
 # Checks for app dependencies
 type pigz >/dev/null 2>&1 || { 
-  echo >&2 "I require PIGZ but it's not installed.  Aborting."; exit 1; 
+  echo >&2 "I require PIGZ but it's not installed.  Aborting."
+  exit 1
 }
 
 # Create a filename with datestamp for our current backup.
