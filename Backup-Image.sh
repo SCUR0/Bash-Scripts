@@ -1,9 +1,14 @@
 #!/bin/bash
-# Backup OS to Network Share
+# This script is used to make a simple image backup to share
 
 # Checks for app dependencies
 type pigz >/dev/null 2>&1 || { 
-  echo >&2 "I require PIGZ but it's not installed.  Aborting."
+  echo >&2 "PIGZ is required for script.  Aborting."
+  exit 1
+}
+# Checks for app dependencies
+type pv >/dev/null 2>&1 || { 
+  echo >&2 "PV is required for script.  Aborting."
   exit 1
 }
 
@@ -17,8 +22,8 @@ ofilefinal=$ofile.gz
 
 # Begin the backup process, should take about 1 hour from 8Gb SD card to HDD/share
 echo -e "\e[93mBacking up SD card to server as "$ofilefinal
-echo -e "\e[93mThis will take many hours. Please wait..."
-pv /dev/sda | pigz --fast > $ofile
+echo -e "\e[93mThis will take many minutes. Please wait..."
+pv /dev/mmcblk0 | pigz --fast > $ofile
 # Collect result of backup procedure
 result=$?
 
