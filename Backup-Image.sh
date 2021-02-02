@@ -1,5 +1,11 @@
 #!/bin/bash
-# This script is used to make a simple image backup to share
+
+#String colors
+yellow='\033[1;33m'
+red='\033[0;31m'
+green='\033[0;32m'
+
+# Backup OS to Network Share
 
 # Checks for app dependencies
 type pigz >/dev/null 2>&1 || { 
@@ -15,28 +21,23 @@ type pv >/dev/null 2>&1 || {
 # Create a filename with datestamp for our current backup.
 # Change /media/backup directory to location you want to back up. In this 
 # case I used a mount of network share.
-ofile="/media/backup/Backup_$(date +%b-%d-%y)"
+file="/media/backup/Backup_$(date +%b-%d-%y).gz"
 
-# Create final filename, with suffix
-ofilefinal=$ofile.gz
-
-# Begin the backup process, should take about 1 hour from 8Gb SD card to HDD/share
-echo -e "\e[93mBacking up SD card to server as "$ofilefinal
-echo -e "\e[93mThis will take many minutes. Please wait..."
-pv /dev/mmcblk0 | pigz --fast > $ofile
+# Begin the backup process
+echo -e "${yellow}Backing up SD card to server as "$file
+echo -e "${yellow}This will take some time. Please wait..."
+pv /dev/mmcblk0 | pigz --fast > $file
 # Collect result of backup procedure
 result=$?
 
 # If command has completed successfully, delete previous backups and exit
 if [ $result = 0 ]; then
-    echo -e "\e[92mSuccessful backup, previous backup files will be deleted."
-    rm -f /media/backup/Backup_*.gz
-    mv $ofile $ofilefinal
+    echo -e "${green}Backup complete"
     exit 0
 # Else remove attempted backup file
 else
-   echo -e "\e[91mBackup failed! Previous backup files untouched."
-   echo -e "\e[91mPlease check status of server"
-   rm -f $ofile
+   echo -e "${red}Backup failed."
+   echo -e "${yellow}Please check status of mount."
+   rm -f $file
    exit 1
 fi
